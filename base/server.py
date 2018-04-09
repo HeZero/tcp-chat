@@ -1,3 +1,6 @@
+# -*- coding=utf-8 -*-
+
+
 import socket
 from base.conn_pool import ConnPool
 from threading import Thread
@@ -56,7 +59,6 @@ class BaseClient():
     def __init__(self):
         self.isConnect = False
         self.client = socket.socket()
-        self.recv_data = ""
 
     def connect(self, host="127.0.0.1", port=2223):
         address = (host, port)
@@ -67,10 +69,12 @@ class BaseClient():
         return self.client
 
     def recv(self):
-        while True:
+        try:
             ret = str(self.client.recv(1024), encoding="utf-8")
-            self.recv_data += ret
-            print(ret)
+            return ret
+        except Exception as e:
+            print(e)
+            raise Exception('Lost connection to remote server')
 
     def send(self, msg):
         if self.isConnect:
